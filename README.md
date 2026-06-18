@@ -35,6 +35,7 @@ It's deliberately small: no accounts, no server you have to run, no build step. 
 | 🔔 **Mentions & reminders** | A bell that surfaces recent comments and @mentions, plus pop-up reminders for tasks due today or overdue. |
 | 🗒️ **Private notes** | Jot notes against any task or member-case group. Stored locally, never pushed to Asana. |
 | 📱 **Readable on any screen** | Large, legible type tuned for desktop and mobile alike. |
+| 📦 **Installable & offline** | A service worker caches the app shell, so it launches instantly, works offline, and installs to your phone/desktop like a native app. |
 | 🔒 **Your token stays yours** | The Asana token lives only in your browser's `localStorage` (or, in the Apps Script option, in your own Google account). |
 
 ## Quick start
@@ -46,6 +47,16 @@ You don't need to install anything to use the hosted version.
 3. Paste it into Cadence and click **Connect**. That's it.
 
 The token is stored only in your browser. To remove it, click the ⚙ settings icon or clear the site's data.
+
+### Install it like an app
+
+Cadence is a Progressive Web App, so you can install it for instant, offline-capable launches:
+
+- **Android / Chrome:** open the site → menu → *Add to Home screen* (or the install prompt).
+- **iPhone / Safari:** open the site → Share → *Add to Home Screen*.
+- **Desktop Chrome/Edge:** click the install icon in the address bar.
+
+Once installed, it opens full-screen with the Cadence icon. The app shell is cached by a [service worker](sw.js), so it loads even with no connection — your most recent tasks (cached locally) show immediately, and it syncs with Asana as soon as you're back online.
 
 ## Self-hosting
 
@@ -114,11 +125,13 @@ Cadence auto-detects Apps Script and uses the server-side path; otherwise it fet
 
 ```
 cadence/
-├── index.html            # the entire app — markup, styles, and logic in one file
-├── cadence-icon.svg      # square app icon (also the source for the favicon)
-├── cadence-logo.svg      # icon + wordmark lockup
+├── index.html              # the entire app — markup, styles, and logic in one file
+├── sw.js                   # service worker (offline cache + app shell)
+├── manifest.webmanifest    # PWA manifest (name, icons, install metadata)
+├── cadence-icon.svg        # square app icon (also the source for the favicon)
+├── cadence-logo.svg        # icon + wordmark lockup
 ├── apps-script/
-│   └── Code.gs           # optional Google Apps Script backend
+│   └── Code.gs             # optional Google Apps Script backend
 ├── README.md
 └── LICENSE
 ```
