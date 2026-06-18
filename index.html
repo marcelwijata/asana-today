@@ -594,10 +594,15 @@ function applyUserProfile(user) {
   const firstName = (user.name||'Marcel').split(' ')[0];
   myName = firstName;
   document.getElementById('greeting').textContent = getGreeting(firstName);
-  const slot = document.getElementById('avatar-slot');
   const url = user.photo?.image_60x60 || user.photo?.image_36x36;
-  if (url) { const img=document.createElement('img'); img.src=url; img.className='header-avatar'; img.alt=firstName; slot.replaceWith(img); }
-  else { slot.textContent = firstName.charAt(0).toUpperCase(); }
+  const slot = document.getElementById('avatar-slot');
+  const existing = document.querySelector('.header-avatar');
+  if (url) {
+    if (existing) { existing.src = url; }
+    else if (slot) { const img=document.createElement('img'); img.src=url; img.className='header-avatar'; img.alt=firstName; slot.replaceWith(img); }
+  } else if (slot) {
+    slot.textContent = firstName.charAt(0).toUpperCase();
+  }
 }
 
 // ── Tasks API ────────────────────────────────────────────
