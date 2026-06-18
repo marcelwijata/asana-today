@@ -1183,16 +1183,30 @@ function generateInsights({completed,incomplete,overdue,byWeek,weekKeys,onTimeRa
 
 // ── Sidebar ──────────────────────────────────────────────
 let sidebarGid = null;
-// Asana link handling. On mobile we render a plain same-tab link to the
-// https task URL — iOS Universal Links / Android App Links route a genuine tap
-// straight into the native Asana app with NO confirmation prompt. (A custom
-// asana:// scheme would open the app too, but always behind an "Open in Asana?"
-// dialog, and JavaScript navigations never trigger Universal Links at all.)
-// On desktop we open the web app in a new tab so Cadence stays put.
-const IS_MOBILE = /android|iphone|ipad|ipod/i.test(navigator.userAgent || '');
+// Asana link handling. The trick on both platforms is to put the right URL
+// directly in href so a genuine tap (not a JS navigation) does the handoff —
+// JS-triggered app opens always hit an OS "Open in app?" confirmation.
+//   • Android: an intent:// URL targeting the Asana package opens the app on tap,
+//     with a built-in https fallback if the app isn't installed. (Plain https
+//     links don't open the app because Asana hasn't verified App Links for them.)
+//   • iOS: the plain https task URL is a Universal Link — a real tap routes
+//     straight into the app with no prompt.
+//   • Desktop: open the web app in a new tab so Cadence stays put.
+const UA = navigator.userAgent || '';
+const IS_ANDROID = /android/i.test(UA);
+const IS_IOS = /iphone|ipad|ipod/i.test(UA);
+const IS_MOBILE = IS_ANDROID || IS_IOS;
+function asanaHref(gid) {
+  const web = 'https://app.asana.com/0/0/' + gid;
+  if (IS_ANDROID) {
+    return 'intent://0/0/' + gid + '/#Intent;scheme=asana;package=com.asana.app;'
+         + 'S.browser_fallback_url=' + encodeURIComponent(web) + ';end';
+  }
+  return web;
+}
 function asanaLinkAttrs(gid) {
-  const url = 'https://app.asana.com/0/0/' + gid;
-  return IS_MOBILE ? `href="${url}"` : `href="${url}" target="_blank" rel="noopener"`;
+  const href = asanaHref(gid);
+  return IS_MOBILE ? `href="${href}"` : `href="${href}" target="_blank" rel="noopener"`;
 }
 
 function openSidebar(gid) {
