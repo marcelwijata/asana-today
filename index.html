@@ -1174,7 +1174,7 @@ function renderSidebar(task) {
       <textarea class="note-textarea" id="note-input-${task.gid}" placeholder="Write a private note for yourself…" onkeydown="handleNoteKey(event,'${task.gid}')"></textarea>
       <button class="note-save-btn" onclick="addNote('${task.gid}')">Save note</button>
     </div>`;
-  setTimeout(()=>document.getElementById('note-input-'+task.gid)?.focus(), 120);
+  if (window.innerWidth > 640) setTimeout(()=>document.getElementById('note-input-'+task.gid)?.focus(), 120);
 }
 
 function renderGroupSidebar(tasks, date, noteKey) {
@@ -1203,7 +1203,7 @@ function renderGroupSidebar(tasks, date, noteKey) {
       <textarea class="note-textarea" id="note-input-${noteKey}" placeholder="Write a private note for this group…" onkeydown="handleNoteKey(event,'${noteKey}')"></textarea>
       <button class="note-save-btn" onclick="addNote('${noteKey}')">Save note</button>
     </div>`;
-  setTimeout(()=>document.getElementById('note-input-'+noteKey)?.focus(), 120);
+  if (window.innerWidth > 640) setTimeout(()=>document.getElementById('note-input-'+noteKey)?.focus(), 120);
 }
 
 function renderNote(gid, n) {
