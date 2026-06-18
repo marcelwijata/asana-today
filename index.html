@@ -272,9 +272,78 @@ body{font-family:'Lora',Georgia,serif;background:var(--bg);color:var(--text);fon
 .btn-primary:disabled{background:#ccc;cursor:not-allowed;}
 
 @media(max-width:640px){
-  .stats,.perf-cards{grid-template-columns:repeat(2,1fr);}
-  .chart-row{grid-template-columns:1fr;}
+  /* Layout */
+  .app{padding:14px 12px 56px;}
+
+  /* Header */
+  .header{gap:8px;margin-bottom:12px;flex-wrap:nowrap;}
+  .header-avatar{width:36px;height:36px;flex-shrink:0;}
+  .avatar-placeholder{width:36px;height:36px;font-size:13px;}
+  .header-greeting{font-size:16px;}
+  .header-sub{font-size:10px;}
+  .header-actions{gap:4px;}
+  .icon-btn{padding:6px 8px;}
+  .btn-label{display:none;}
+  .last-updated{display:none;}
+
+  /* Tab bar */
+  .tab-bar{margin-bottom:10px;}
+  .tab-btn{padding:5px 16px;font-size:12px;}
+
+  /* Filter bar */
+  .filter-bar{padding:8px 10px;gap:6px;}
+  .filter-bar-left{gap:5px;}
+  .dd-btn{padding:5px 9px;font-size:12px;}
+  .dd-menu{min-width:170px;max-height:260px;}
+  .search-wrap input{font-size:12px;padding:5px 10px 5px 28px;}
+  .search-icon{left:8px;}
+
+  /* Stats cards */
+  .stats{grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:10px;}
+  .stat{padding:10px 12px;}
+  .stat-label{font-size:10px;}
+  .stat-num{font-size:22px;}
+
+  /* Sections */
+  .section-hdr{padding:10px 12px;}
+  .sec-title{font-size:12px;}
+  .task-row{padding:9px 12px;gap:8px;}
+  .task-name{font-size:12px;}
+  .badge{font-size:9px;padding:1px 5px;}
+  .mgroup-names{font-size:11px;}
+
+  /* Backlog */
+  .backlog-alert{padding:10px 12px;}
+  .backlog-grid{grid-template-columns:1fr;}
+
+  /* Sidebar — full screen */
   .sidebar{width:100vw;}
+  .sb-body{padding:16px 16px 40px;}
+
+  /* Notification panel — fixed to viewport so it never clips */
+  .notif-panel{position:fixed;top:70px;left:10px;right:10px;width:auto;max-width:none;}
+  .notif-body{max-height:55vh;}
+
+  /* Toast — full width at bottom */
+  .toast-container{left:12px;right:12px;max-width:none;bottom:16px;}
+  .toast{width:100%;}
+
+  /* Statistics tab */
+  .perf-cards{grid-template-columns:repeat(2,1fr);gap:7px;}
+  .perf-card{padding:10px 12px;}
+  .perf-card-value{font-size:20px;}
+  .perf-card-label{font-size:10px;}
+  .chart-row{grid-template-columns:1fr;}
+  .chart-card,.chart-card-full{padding:12px 14px;}
+  .period-bar{gap:4px;}
+  .period-btn{padding:4px 10px;font-size:11px;}
+  .insight{font-size:12px;padding:8px 12px;}
+
+  /* Setup card */
+  .setup-card{padding:24px 20px;}
+
+  /* Dropdowns: keep within screen on the right side */
+  #wrap-tag .dd-menu{left:auto;right:0;}
 }
 </style>
 </head>
@@ -305,7 +374,7 @@ body{font-family:'Lora',Georgia,serif;background:var(--bg);color:var(--text);fon
       <span class="last-updated" id="last-updated"></span>
       <button class="icon-btn" onclick="refresh()">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.5 8A5.5 5.5 0 1 1 8 2.5"/><path d="M10 1.5 8 3.5l2 2" stroke-linecap="round"/></svg>
-        Refresh
+        <span class="btn-label">Refresh</span>
       </button>
       <div class="notif-wrap">
         <button class="icon-btn notif-btn" id="notif-btn" onclick="toggleNotifPanel()">
