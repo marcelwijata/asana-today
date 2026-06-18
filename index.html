@@ -292,14 +292,17 @@ body{font-family:'Lora',Georgia,serif;background:var(--bg);color:var(--text);fon
      readable. Nothing drops below ~14px so it stays comfortable for older eyes. */
   .app{padding:16px 13px 56px;}
 
-  /* Header */
-  .header{gap:10px;margin-bottom:14px;flex-wrap:nowrap;}
-  .header-avatar{width:42px;height:42px;flex-shrink:0;}
-  .avatar-placeholder{width:42px;height:42px;font-size:16px;}
-  .header-greeting{font-size:21px;}
-  .header-sub{font-size:13px;}
-  .header-actions{gap:5px;}
-  .icon-btn{padding:9px 10px;}
+  /* Header — name-forward profile block so the greeting never wraps messily */
+  .header{gap:11px;margin-bottom:16px;flex-wrap:nowrap;}
+  .header-avatar{width:44px;height:44px;flex-shrink:0;}
+  .avatar-placeholder{width:44px;height:44px;font-size:17px;}
+  .header-greeting{line-height:1.2;}
+  .greet-time{display:block;font-size:13px;font-weight:600;color:var(--text-secondary);line-height:1.3;}
+  .greet-name{display:block;font-size:23px;font-weight:700;color:var(--primary);line-height:1.15;}
+  .header-sub{font-size:12px;margin-top:2px;}
+  .header-actions{gap:4px;}
+  .icon-btn{padding:8px 9px;}
+  .icon-btn svg{width:18px;height:18px;}
   .btn-label{display:none;}
   .last-updated{display:none;}
 
@@ -639,10 +642,14 @@ function updateClearAll() {
 
 // ── Boot ─────────────────────────────────────────────────
 function getToday() { return new Date().toISOString().split('T')[0]; }
-function getGreeting(name) {
+// Greeting as two parts so mobile can show a small time "eyebrow" above a big
+// name, while desktop renders them inline as "Good afternoon, Marcel!".
+function greetingHTML(name) {
   const h = new Date().getHours();
   const t = h<12?'Good morning':h<18?'Good afternoon':'Good evening';
-  return name ? `${t}, ${name}!` : `${t}!`;
+  return name
+    ? `<span class="greet-time">${t},</span> <span class="greet-name">${escHtml(name)}!</span>`
+    : `<span class="greet-time">${t}!</span>`;
 }
 function formatDisplayDate(d) {
   const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -654,7 +661,7 @@ function getPAT() { return localStorage.getItem('asana_pat')||''; }
 function checkSetup() {
   today = getToday();
   document.getElementById('header-date').textContent = formatDisplayDate(new Date());
-  document.getElementById('greeting').textContent = getGreeting('');
+  document.getElementById('greeting').innerHTML = greetingHTML('');
   if (IS_GAS) { showApp(); loadTasksGAS(); }
   else if (getPAT()) { showApp(); loadTasks(); }
   else { document.getElementById('setup-screen').style.display='flex'; }
@@ -690,7 +697,7 @@ function applyUserProfile(user) {
   myGid = user.gid || null;
   const firstName = (user.name||'').split(' ')[0];
   myName = firstName;
-  document.getElementById('greeting').textContent = getGreeting(firstName);
+  document.getElementById('greeting').innerHTML = greetingHTML(firstName);
   const url = user.photo?.image_60x60 || user.photo?.image_36x36;
   const slot = document.getElementById('avatar-slot');
   const existing = document.querySelector('.header-avatar');
@@ -1199,7 +1206,10 @@ const IS_MOBILE = IS_ANDROID || IS_IOS;
 function asanaHref(gid) {
   const web = 'https://app.asana.com/0/0/' + gid;
   if (IS_ANDROID) {
-    return 'intent://0/0/' + gid + '/#Intent;scheme=asana;package=com.asana.app;'
+    // Force the Asana package to handle its own https URL. Asana registers an
+    // intent-filter for app.asana.com (that's how shared links open the app), so
+    // naming the package launches the app directly; the fallback covers "not installed".
+    return 'intent://app.asana.com/0/0/' + gid + '/#Intent;scheme=https;package=com.asana.app;'
          + 'S.browser_fallback_url=' + encodeURIComponent(web) + ';end';
   }
   return web;
